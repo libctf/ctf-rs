@@ -1,0 +1,27 @@
+[x] CREATE NODE TABLE Ctf(name STRING, PRIMARY KEY (name))
+[x] CREATE NODE TABLE User(profile UUID, name STRING, email STRING, PRIMARY KEY (name))
+[x] CREATE NODE TABLE Team(profile UUID, name STRING, admin UUID, PRIMARY KEY (name))
+[x] CREATE NODE TABLE Event(id UUID, startDate TIMESTAMP, times INTERVAL, PRIMARY KEY (id))
+[ ] CREATE NODE TABLE Group(id UUID, name STRING, email STRING, PRIMARY KEY (id))
+[ ] CREATE NODE TABLE Answer(id UUID, name STRING, email STRING, PRIMARY KEY (id))
+[x] CREATE NODE TABLE Challenge(id UUID, name STRING, verifier UUID, PRIMARY KEY (id))
+[x] CREATE NODE TABLE UserProfile(id UUID, fname STRING, lname STRING, history MAP(UUID, INT64), PRIMARY KEY (id))
+[x] CREATE NODE TABLE TeamProfile(id UUID, discord STRING, history MAP(UUID, INT64), PRIMARY KEY (id))
+
+CREATE REL TABLE Owns(FROM User TO UserProfile, FROM Team TO TeamProfile, since INT64)
+CREATE REL TABLE Gates(FROM Challenge TO Challenge)
+CREATE REL TABLE Hosts(FROM Ctf TO Event, ONE_TO_MANY)
+CREATE REL TABLE Solves(FROM User TO User, MANY_TO_ONE)
+CREATE REL TABLE Submits(FROM User TO User, ONE_TO_MANY)
+CREATE REL TABLE Member(FROM Team TO User, ONE_TO_MANY)
+CREATE REL TABLE MemberOf(FROM User TO Team, FROM User TO Group, FROM Team TO Group, FROM UserProfile TO Group, FROM TeamProfile TO Group, ONE_TO_MANY)
+CREATE REL TABLE Contains(FROM Ctf to Challenge, ONE_TO_MANY)
+CREATE REL TABLE LockedToo(FROM User TO User, ONE_TO_MANY)
+CREATE REL TABLE ParticipatedIn(FROM User TO Ctf, FROM Team TO Ctf, ONE_TO_MANY)
+CREATE REL TABLE CreatedBy(FROM Challenge TO UserProfile, MANY_TO_ONE)
+
+
+COPY User FROM "./data/user.csv";
+COPY City FROM "./data/city.csv";
+COPY Follows FROM "./data/follows.csv";
+COPY LivesIn FROM "./data/lives-in.csv";
