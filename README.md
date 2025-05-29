@@ -10,3 +10,11 @@ ctf-rs is ctf platform inspired by CTFd, but w/o any price gated features, and b
 - GraphQL API: Juniper
 - Web UI: Leptos
 - Desktop Apps: Tauri
+
+## Install
+
+### macOS
+
+- Homebrew:
+  - `brew tap libctf/ctf-rs`
+  - `brew install ctf-rs`
