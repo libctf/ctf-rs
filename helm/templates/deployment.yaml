@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-server
+  labels:
+    app: ctf-rs
+    component: api
+    scope: user
+spec:
+  replicas: { { .Values.api.replicaCount } }
+  selector:
+    matchLabels:
+      app: ctf-rs
+      component: api
+      scope: user
+  template:
+    metadata:
+      annotations: { { toYaml . | nindent 8 } }
+      labels:
+        app: ctf-rs
+        component: api
+        scope: user
+    spec:
+      imagePullSecrets: { { toYaml . | nindent 8 } }
+      serviceAccountName: { { include "ctf-rs.serviceAccountName" . } }
+      securityContext: { { toYaml . | nindent 8 } }
+      containers:
+        - name: { { .Chart.Name } }
+          securityContext:
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: { { .Values.image.pullPolicy } }
+          ports:
+            - name: http
+              containerPort: { { .Values.service.port } }
+              protocol: TCP
+          livenessProbe:
+          readinessProbe:
+          resources:
+          volumeMounts:
+      volumes:
+      nodeSelector:
+      affinity:
+      tolerations:
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ctfdb
+  labels:
+    app: ctf-rs
+    component: db
+    scope: user
+spec:
+  replicas: { { .Values.api.replicaCount } }
+  selector:
+    matchLabels:
+      app: ctf-rs
+      component: api
+      scope: backend
+  template:
+    metadata:
+      annotations: { { toYaml . | nindent 8 } }
+      labels:
+        app: ctf-rs
+        component: api
+        scope: user
+    spec:
+      imagePullSecrets: { { toYaml . | nindent 8 } }
+      serviceAccountName: { { include "ctf-rs.serviceAccountName" . } }
+      securityContext: { { toYaml . | nindent 8 } }
+      containers:
+        - name: { { .Chart.Name } }
+          securityContext:
+          image: kuzudb/explorer:latest
+          imagePullPolicy: { { .Values.image.pullPolicy } }
+          ports:
+            - name: http
+              containerPort: { { .Values.service.port } }
+              protocol: TCP
+          livenessProbe:
+          readinessProbe:
+          resources:
+          volumeMounts:
+      volumes:
+      nodeSelector:
+      affinity:
+      tolerations:
